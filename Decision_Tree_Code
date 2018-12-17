@@ -10,19 +10,21 @@ test = pd.read_csv("decisiontree_1_1.csv",index_col=["No"])
 print(test.shape)
 test.head()
 
-# 변수 지정
+# X축 
 feature_names = ["Floating(Dong)","Floating(Dong)/Floating(Gu)","WomenFloting(Dong)","WF(Dong)/WF(Gu)","WF(Dong)/Floating(Dong)","Aroung Market(OX)","Average Loan(up/down)","Population(Dong)","Risk of new startups","Number of subway passengers (Dong/Year)","Number of subway passengers (Dong/Month)"]
 X_train = train[feature_names]
 print(X_train.shape)
 X_train.head()
 
 
+# Y축
 label_name = "Gu"
 y_train = train[label_name]
 print(y_train.shape)
 y_train.head()
 
 
+# Decision Tree 속성 결정
 from sklearn.tree import DecisionTreeClassifier
 seed = 10
 model = DecisionTreeClassifier(criterion='entropy',max_depth=3,
@@ -30,6 +32,7 @@ model = DecisionTreeClassifier(criterion='entropy',max_depth=3,
 model.fit(X_train, y_train)
 
 
+# Draw Decision Tree 
 from sklearn.tree import export_graphviz
 import graphviz
 
@@ -42,3 +45,76 @@ with open("decision-tree.dot") as f:
     dot_graph = f.read()
     
 graphviz.Source(dot_graph)
+
+
+---------------------------------------------------------------------------------------------------
+
+# Depth 별 정확도 파악 (Train set & Test set)
+X_test = test[feature_names]
+prediction = model.predict(X_test)
+submission = pd.read_csv("decisiontree_1_1.csv", index_col="Code_Dong")
+submission["Gu"] = prediction
+print(submission.shape)
+submission.head()
+
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,stratify=y, random_state=0)
+    
+# Depth 설정 전 정확도
+tree = DecisionTreeClassifier(random_state=0)
+tree.fit(X_train, y_train)
+
+print("훈련 세트 정확도: {:.3f}".format(tree.score(X_train, y_train)))
+print("테스트 세트 정확도: {:.3f}".format(tree.score(X_test, y_test)))
+
+
+# Depth = 1
+tree = DecisionTreeClassifier(max_depth=1, random_state=0)
+tree.fit(X_train, y_train)
+
+print("훈련 세트 정확도: {:.3f}".format(tree.score(X_train, y_train)))
+print("테스트 세트 정확도: {:.3f}".format(tree.score(X_test, y_test)))
+
+
+# Depth = 2
+tree = DecisionTreeClassifier(max_depth=2, random_state=0)
+tree.fit(X_train, y_train)
+
+print("훈련 세트 정확도: {:.3f}".format(tree.score(X_train, y_train)))
+print("테스트 세트 정확도: {:.3f}".format(tree.score(X_test, y_test)))
+
+
+# Depth = 3
+tree = DecisionTreeClassifier(max_depth=3, random_state=0)
+tree.fit(X_train, y_train)
+
+print("훈련 세트 정확도: {:.3f}".format(tree.score(X_train, y_train)))
+print("테스트 세트 정확도: {:.3f}".format(tree.score(X_test, y_test)))
+
+
+# Depth = 4
+tree = DecisionTreeClassifier(max_depth=4, random_state=0)
+tree.fit(X_train, y_train)
+
+print("훈련 세트 정확도: {:.3f}".format(tree.score(X_train, y_train)))
+print("테스트 세트 정확도: {:.3f}".format(tree.score(X_test, y_test)))
+
+
+# Depth = 5
+tree = DecisionTreeClassifier(max_depth=5, random_state=0)
+tree.fit(X_train, y_train)
+
+print("훈련 세트 정확도: {:.3f}".format(tree.score(X_train, y_train)))
+print("테스트 세트 정확도: {:.3f}".format(tree.score(X_test, y_test)))
+
+
+# Depth = 6
+tree = DecisionTreeClassifier(max_depth=6, random_state=0)
+tree.fit(X_train, y_train)
+
+print("훈련 세트 정확도: {:.3f}".format(tree.score(X_train, y_train)))
+print("테스트 세트 정확도: {:.3f}".format(tree.score(X_test, y_test)))
+
