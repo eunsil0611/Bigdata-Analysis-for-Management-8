@@ -1,0 +1,44 @@
+import pandas as pd
+
+# Train set 불러오기
+train = pd.read_csv("decisiontree_1.csv", index_col=["No"])
+print (train.shape)
+train.head()
+
+# Test set 불러오기
+test = pd.read_csv("decisiontree_1_1.csv",index_col=["No"])
+print(test.shape)
+test.head()
+
+# 변수 지정
+feature_names = ["Floating(Dong)","Floating(Dong)/Floating(Gu)","WomenFloting(Dong)","WF(Dong)/WF(Gu)","WF(Dong)/Floating(Dong)","Aroung Market(OX)","Average Loan(up/down)","Population(Dong)","Risk of new startups","Number of subway passengers (Dong/Year)","Number of subway passengers (Dong/Month)"]
+X_train = train[feature_names]
+print(X_train.shape)
+X_train.head()
+
+
+label_name = "Gu"
+y_train = train[label_name]
+print(y_train.shape)
+y_train.head()
+
+
+from sklearn.tree import DecisionTreeClassifier
+seed = 10
+model = DecisionTreeClassifier(criterion='entropy',max_depth=3,
+                               random_state=seed)
+model.fit(X_train, y_train)
+
+
+from sklearn.tree import export_graphviz
+import graphviz
+
+export_graphviz(model,
+                feature_names=feature_names,
+                class_names=["Unfitness", "Fitness"],
+                out_file="decision-tree.dot")
+
+with open("decision-tree.dot") as f:
+    dot_graph = f.read()
+    
+graphviz.Source(dot_graph)
